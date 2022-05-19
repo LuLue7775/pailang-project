@@ -1,30 +1,87 @@
-import React from 'react';
-import Xarrow, {useXarrow, Xwrapper} from 'react-xarrows';
-import Draggable from 'react-draggable';
+import React, { useEffect, useState } from 'react';
+import Header from './components/Header';
 
-const boxStyle = {border: 'grey solid 2px', borderRadius: '10px', padding: '5px', height:'100px', width:'100px'};
+import {
+    BrowserRouter,
+    Routes,
+    Route, 
+  } from "react-router-dom";
+import About from './pages/About';
+import Agenda from './pages/Agenda';
+import PageTwo from './pages/PageTwo';
+import Home from './pages/Home';
+import Video from './pages/Video';
 
-const DraggableBox = ({id}) => {
-    const updateXarrow = useXarrow();
-    return (
-        <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
-            <div id={id} style={boxStyle}>
-                {id}
-            </div>
-        </Draggable>
-    );
-};
+import styled, { keyframes } from "styled-components";
+import ModalStart from './components/ModalStart';
+
+import gsap from 'gsap';
+import { CSSRulePlugin } from "gsap/CSSRulePlugin";
+gsap.registerPlugin(CSSRulePlugin);
+
 
 export default function App() {
+    const [modalShow, setModalShow] = useState(true);
+    useEffect(() => {
+        setTimeout(() => { 
+            setModalShow(false);
+        }, 3000 );
+    }, []);
+
     return (
-        <div style={{display: 'flex', justifyContent: 'space-evenly', height:'200vh', width: '100%'}}>
-            <div style={{ height:'100vh', width: '100%', background:'#DAFF9E' }} > 
-              <Xwrapper>
-                  <DraggableBox id={'elem1'}/>
-                  <DraggableBox id={'elem2'}/>
-                  <Xarrow start={'elem1'} end="elem2"/>
-              </Xwrapper>
-            </div>
-        </div>
+        <StyledApp className='app'>
+            <StyledContent modalShow={modalShow}>
+                <BrowserRouter>
+                    <Header/>
+                    <StyledLayout>
+                        <Routes>
+                            <Route path="/" element={<Home />}/>
+                            <Route path="/video" element={<Video />}/>
+                            <Route path="/about" element={<About />}/>
+                            <Route path="/agenda" element={<Agenda />}/>
+                            <Route path="/pagetwo" element={<PageTwo />}/>
+                        </Routes>
+                    </StyledLayout>
+                </BrowserRouter>
+            </StyledContent>
+
+            <ModalStart modalShow={modalShow} />       
+
+        </StyledApp>
     );
 }
+
+
+const StyledApp = styled.div`
+    position:relative;
+    height: 100vh;
+    width: 100%;
+    background: rgb(0,0,0);
+    background: radial-gradient(circle, rgba(0,0,0,0.8241302588996764) 0%, rgba(0,0,0,1) 82%);
+`;
+const StyledLayout = styled.div`
+    position:relative;
+    bottom: 0;
+    z-index: 0;
+
+`;
+
+const fadeIn = keyframes`
+  from {
+    transform: scale(.25);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+/**
+ * Make these gsap to animate elements one by one.
+ */
+const StyledContent = styled.div` 
+    animation-delay: 2s;
+    animation: ${({modalShow})=> modalShow ? '' : fadeIn } .3s linear ;
+    opacity: ${({modalShow})=> modalShow ? 0 : 1};
+`;
