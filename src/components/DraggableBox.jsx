@@ -9,16 +9,27 @@ import { CSSPlugin } from 'gsap/CSSPlugin'
 gsap.registerPlugin(CSSPlugin);
 
 const setPos = [
-    { x: 250, y: 0 },
-    { x: -250, y: 200 },
-    { x: 250, y: 400 },
+    { x: 250, y: 0 }, 
+    { x: -250, y: 100 },
+    { x: 250, y: 100 },
+    { x: 250, y: 200 },
+    { x: -250, y: 250 },  //5
+    { x: 250, y: 300 },
+    { x: -250, y: 350 },
+    { x: -250, y: 500 },
     { x: -250, y: 600 },
-    { x: 100, y: 800 },  // |x|>150, y<200
-    { x: -250, y: 1000 },
-    { x: 250, y: 1200 },
-    { x: -250, y: 1400 },
-    { x: 250, y: 1600 },
-    { x: -250, y: 1800 },
+    { x: 250, y: 550 }, //10
+    { x: 250, y: 0 }, 
+    { x: -250, y: 100 },
+    { x: 250, y: 100 },
+    { x: 250, y: 200 },
+    { x: 100, y: 400 },  
+    { x: -250, y: 500 },
+    { x: 250, y: 600 },
+    { x: -250, y: 700 },
+    { x: 250, y: 800 },
+    { x: -250, y: 900 }, //20
+    
   ]
 
 const  DraggableBox = ({boxIndex, id, node, desciption, elemPos = { x: 100, y: 100 } }) => {
@@ -39,9 +50,10 @@ const  DraggableBox = ({boxIndex, id, node, desciption, elemPos = { x: 100, y: 1
             <StyledBoxContainer className="box-container" id={id} >
                 <StyledBox>
                  <p>{id}</p>
-                 {node.content.map( (item, i) => (
-                     <div key={i}> {item} </div>
-                 ))}
+                 {node.content.map( (item, i) => 
+                    node.type === 'text' 
+                    ? <div key={i}> {item} </div>
+                    : <StyledImageContainer> img/video</StyledImageContainer>)}
                 </StyledBox>
                 { desciption?.length && 
                     desciption.map( (item, i) => (
@@ -72,6 +84,7 @@ const StyledBox = styled.div`
     padding:  10px; 
     background-color: #000;
     color: #FFF;
+    
     cursor: grab;
 `;
 
@@ -79,4 +92,10 @@ const StyledBoxDesc = styled.div`
     color: #fff;
     font-size:5px;
     
+`;
+const StyledImageContainer = styled.div`
+    background: #FFF;
+    width: 200px;
+    height: 100px;
+    color: #000;
 `;

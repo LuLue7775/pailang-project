@@ -10,7 +10,6 @@ const modalAnimation = (ref) => {
 
 export default function ModalStart({ modalShow }) {
     const modalRef = useRef();
-    console.log(modalShow)
 
     useEffect(() => {
         if (!modalShow) modalAnimation(modalRef.current);

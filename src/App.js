@@ -19,7 +19,6 @@ import gsap from 'gsap';
 import { CSSRulePlugin } from "gsap/CSSRulePlugin";
 gsap.registerPlugin(CSSRulePlugin);
 
-
 export default function App() {
     const [modalShow, setModalShow] = useState(true);
     useEffect(() => {
@@ -68,12 +67,10 @@ const StyledLayout = styled.div`
 
 const fadeIn = keyframes`
   from {
-    transform: scale(.25);
     opacity: 0;
   }
 
   to {
-    transform: scale(1);
     opacity: 1;
   }
 `;

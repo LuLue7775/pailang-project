@@ -60,12 +60,11 @@ export default function PageOneRightCol() {
                         elem.connectTail && ( 
                             elem.connectTo.map( (node, i) => (
                                 <Xarrow key={i}
-                                    start={elem.id} 
-                                    end={ node }  
+                                    start={ node } 
+                                    end={ elem.id }  
                                     dashness={elem.dashness[i]} 
                                     {...arrowStyles} /> )
                             ))
-
                         }
                     </div>
             ))}
