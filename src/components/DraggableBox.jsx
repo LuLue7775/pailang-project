@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from "styled-components";
 
 import { useXarrow } from 'react-xarrows';
 import Draggable from 'react-draggable';
+
+import { Flipper, Flipped } from 'react-flip-toolkit'
 
 import { gsap } from 'gsap/dist/gsap'
 import { CSSPlugin } from 'gsap/CSSPlugin'
@@ -18,7 +20,7 @@ const setPos = [
     { x: -250, y: 350 },
     { x: -250, y: 500 },
     { x: -250, y: 600 },
-    { x: 250, y: 550 }, //10
+    { x: 250, y: 550 },  //10
     { x: 250, y: 0 }, 
     { x: -250, y: 100 },
     { x: 250, y: 100 },
@@ -36,6 +38,9 @@ const  DraggableBox = ({boxIndex, id, node, desciption, elemPos = { x: 100, y: 1
     const updateXarrow = useXarrow();
     const posRef = useRef();
 
+    const [fullScreen, setFullScreen] = useState(false);
+    const toggleFullScreen = () => setFullScreen(prevState => !prevState);
+
     // useEffect(() => {
     //     if (posRef.current) {
     //         gsap.to(posRef.current, { x:-100, y:200, opacity:.5, duration:1, delay:2, ease: "power3.inOut" } );
@@ -47,14 +52,24 @@ const  DraggableBox = ({boxIndex, id, node, desciption, elemPos = { x: 100, y: 1
             // position={setPos[boxIndex]}
             defaultPosition = {setPos[boxIndex]}
         >
-            <StyledBoxContainer className="box-container" id={id} >
-                <StyledBox>
-                 <p>{id}</p>
-                 {node.content.map( (item, i) => 
-                    node.type === 'text' 
-                    ? <div key={i}> {item} </div>
-                    : <StyledImageContainer> img/video</StyledImageContainer>)}
-                </StyledBox>
+            <StyledBoxContainer className="box-container" id={id} fullScreen={fullScreen}>
+                <Flipper flipKey={fullScreen}>
+                    <Flipped flipId="square">
+                        <StyledBox 
+                            className={fullScreen ? "full-screen-square" : "square"}
+                            onClick={toggleFullScreen}
+                            fullScreen={fullScreen}
+                        >
+                        <p>{id}</p>
+                        {node.content.map( (item, i) => 
+                            node.type === 'text' 
+                            ? <div key={i}> {item} </div>
+                            : <StyledImageContainer> img/video</StyledImageContainer>)}
+                        </StyledBox>
+                    </Flipped>
+                </Flipper>
+
+
                 { desciption?.length && 
                     desciption.map( (item, i) => (
                         <StyledBoxDesc key={i}>
@@ -76,9 +91,17 @@ const StyledBoxContainer = styled.div`
     max-width: 380px;
     inline-size: 370px;
     overflowWrap: break-word;
+    z-index: ${({fullScreen}) => ( fullScreen ? '50' : '0')};
+
 `;
 const StyledBox = styled.div`
     position: relative;
+    // position: ${({fullScreen}) => ( fullScreen ? 'absolute' : 'relative')};
+    top: ${({fullScreen}) => ( fullScreen ? 0 : '')};
+    left: ${({fullScreen}) => ( fullScreen ? 0 : '')};
+    width: ${({fullScreen}) => ( fullScreen ? '50vw' : '')};
+    height: ${({fullScreen}) => ( fullScreen ? '50vh' : '')};
+
     border: grey solid 1px; 
     border-radius: 10px; 
     padding:  10px; 
@@ -86,6 +109,8 @@ const StyledBox = styled.div`
     color: #FFF;
     
     cursor: grab;
+
+
 `;
 
 const StyledBoxDesc = styled.div`
