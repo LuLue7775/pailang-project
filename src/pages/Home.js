@@ -28,7 +28,7 @@ const StyledHome = styled.div`
   position: relative;
   display:grid;
   grid-template-columns:2fr 3fr;
-  height: calc(100vh - 250px) };
+  height: calc(100vh - 250px) ;
 `;
 
 const StyledHomeLeftCol = styled.div`
@@ -36,7 +36,7 @@ const StyledHomeLeftCol = styled.div`
   height: 100%;
   overflow-y:scroll;
   
-  ::-webkit-scrollbar { width: 0; }
+  ::-webkit-scrollbar { width: 0; };
 
 `;
 
@@ -46,6 +46,6 @@ const StyledHomeRightCol = styled.div`
   overflow-y:scroll;
   height: 100%;
 
-  ::-webkit-scrollbar { width: 0; }
+  ::-webkit-scrollbar { width: 0; };
 `;
 

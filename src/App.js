@@ -20,7 +20,7 @@ import { CSSRulePlugin } from "gsap/CSSRulePlugin";
 gsap.registerPlugin(CSSRulePlugin);
 
 export default function App() {
-    const [modalShow, setModalShow] = useState(true);
+    const [modalShow, setModalShow] = useState(false); //default true
     useEffect(() => {
         setTimeout(() => { 
             setModalShow(false);
@@ -44,7 +44,7 @@ export default function App() {
                 </BrowserRouter>
             </StyledContent>
 
-            <ModalStart modalShow={modalShow} />       
+            {/* <ModalStart modalShow={modalShow} />        */}
 
         </StyledApp>
     );

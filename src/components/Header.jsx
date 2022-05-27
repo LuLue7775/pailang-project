@@ -98,6 +98,7 @@ const StyledHeader = styled.div`
     background-color: transparent;
 `;
 const StyledTitleContainer = styled.div`
+    height: auto;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -111,17 +112,16 @@ const StyledTitleContainer = styled.div`
 `;
 
 const StyledTitle = styled.h1`
-    line-height: 0rem;
     color: #FFF;
     display:inline;
 `;
 
 const StyledSubTitle = styled.h3`
-    line-height: 0rem;
     color: #F5F4F4dF;
     display:inline;
 `;
 const StyledTitleLines = styled.div`
+    padding: 10px;
     color: #F5F4F4dF;
     font-size: .8rem;
     text-align: center;
