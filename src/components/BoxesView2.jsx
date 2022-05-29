@@ -168,8 +168,7 @@ export default function BoxesView() {
                 throwProps: true,
                 onThrowUpdate: initialPath // check if tail exist first
             })
-}
-        )
+        })
 
 
         // Draggable.create(handle1ref.current, {

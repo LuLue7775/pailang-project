@@ -7,7 +7,7 @@ const setRefs = (elem, i, refs) => {
 
 export default function SVGsContainer({ elementsData, pathRefs }) {
   return (
-    <StyledSvgArea className='svg-area'>  
+    <StyledSvgArea className='svg-area' elementAmount={elementsData.length}>  
         {elementsData?.map((elem, i) =>  
          elem?.connectTail &&
             elem?.connectTo.map((line, i) => 
@@ -30,11 +30,15 @@ const StyledPath = styled.path`
 `
 
 const StyledSvgArea = styled.svg`
-    position: fixed;
+    position: absolute;
     width: 100%;
-    height: 100%;
+    // height: 100%;
+    height: ${({elementAmount}) => elementAmount*300  }px;  
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow-y: scroll;
+
+
 `

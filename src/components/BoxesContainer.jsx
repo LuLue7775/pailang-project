@@ -15,8 +15,13 @@ export default function BoxesContainer({elementsData, handleRefs, detailRef}) {
               className={`box${i} connect-${elem.connectTail}`}
               key={`box${elem.id}` }
               ref={elem => setRefs(elem, i, handleRefs)}
-          > {elem.id}{elem.node.content.map(( e, i ) => <div key={i}> {e}</div>)} 
-            <ExtendableContent detailRef={detailRef} />
+          > {elem.id} 
+            <ExtendableContent 
+                  boxIndex={i} 
+                  id={elem.id} 
+                  node={elem.node} // {"type":"img", "content": ["url"] }
+                  desciption={elem.desciption}
+              />
           </StyledBoxContainer>
         )
     }
@@ -28,13 +33,13 @@ export default function BoxesContainer({elementsData, handleRefs, detailRef}) {
 const StyledBoxContainer = styled.div`
     position: relative;
     padding: 5px; 
-    height: auto;
-    width: auto;
-    min-height: 50px;
-    max-width: 320px;
+    height: 120px;
+    width: 100px;
+    max-width: 350px;
     inline-size: 370px;
     overflowWrap: break-word;
     z-index: ${({fullScreen}) => ( fullScreen ? '50' : '0')};
     color: #FFF;
     border: 1px solid #FFF;
+
 `;

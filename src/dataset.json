@@ -54,7 +54,7 @@
                 { "id": "6", "node": {"type":"text", "content": ["Asiatic Cholera, Asia, 1817-1824"] }, "desciption":["第一次霍亂大流行，亞洲，1817-1824"], "connectTo":["7"], "connectTail": true, "dashness": [false], "outline":"rect" },
                 { "id": "7", "node": {"type":"image", "content": ["url"] }, "desciption":["Edgar Allan Poe, The Masque of the Red Death (1842)", "愛倫・坡，《红死魔的面具》(1842)"], "connectTo":["8"], "connectTail": true, "dashness": [false], "outline":"rect" },
                 
-                { "id": "8", "node": {"type":"text", "content": ["url"] }, "desciption":["Wardian case, England, 1842", "沃德箱，英國，1842"], "connectTo":["9"], "connectTail": true, "dashness": [false], "outline":"rect" },
+                { "id": "8", "node": {"type":"video", "content": ["url"] }, "desciption":["Wardian case, England, 1842", "沃德箱，英國，1842"], "connectTo":["9"], "connectTail": true, "dashness": [false], "outline":"rect" },
                 { "id": "9", "node": {"type":"text", "content": ["In the vibrant and lively scenery, no sound was heard. Intermittently, like the gasping of a malaria patient, the stifling breeze blew. All of these created in me a landscape, a symbol, giving me a feeling as if in a dream, creepy and eerie.", "Haruo Sato, Strange Tale of the Bridal Fan (1925)"] }, 
                   "desciption":["激盪跳躍的景色中，靜闐聽不見任何聲響。間歇地，有如瘧疾患者的喘息似地，悶鬱的微風吹動。這一切，形成一種內在風景，一種象徵，給我一種如同夢境似的感覺，毛骨悚然。", "女誡扇綺譚 (1925)"], 
                   "connectTo":[], "connectTail": false, "dashness": [false], "outline":"rect" }

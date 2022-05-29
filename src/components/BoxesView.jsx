@@ -2,111 +2,102 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import styled from "styled-components"
 import dataJson from '../dataset.json';
 import BoxesContainer from './BoxesContainer';
+import SVGsContainer from './SVGsContainer';
 
 import gsap from 'gsap'
 import Draggable from 'gsap/dist/Draggable'
 import InertiaPlugin from 'gsap/dist/InertiaPlugin'
-import ExtendableContent from './ExtendableContent'
-import SVGsContainer from './SVGsContainer';
 gsap.registerPlugin(InertiaPlugin)
 gsap.registerPlugin(Draggable)
 
+/**
+ * @TODO topic1 will be dynamic in NextJS from route param.
+ */
 
- const setPos = [
-    { x: 400, y: 150 }, 
-    { x: -250, y: 100 },
-    { x: 250, y: 100 }, 
-    { x: 250, y: 200 },
-    { x: 250, y: 250 },  //5
-    { x: 250, y: 300 },
-    { x: 250, y: 350 },
-    { x: 250, y: 500 },
-    { x: 250, y: 600 },
-    { x: 250, y: 550 },  //10
-    { x: 250, y: 0 }, 
-    { x: -250, y: 100 },
-    { x: 250, y: 100 },
-    { x: 250, y: 200 },
-    { x: 100, y: 400 },  
-    { x: -250, y: 500 },
-    { x: 250, y: 600 },
-    { x: -250, y: 700 },
-    { x: 250, y: 800 },
-    { x: -250, y: 900 }, //20
-    
-  ]
+const genRandomPos = (viewW, topic1) => {
+    return topic1?.map((item, i) => {
+        return { x: Math.random()*viewW, y: 65*i }
+    })
+}
 
+const getWindowDimensions = () => {
+    const { innerWidth: width, innerHeight: height } = window;
+    return { width, height };
+}
 
-export default function BoxesView() {
-    const { topic1 } = dataJson?.homePage?.rightCol;
-
-    const handleRefs = useRef([]);
-    const pathRefs = useRef([]);
-    
-    useLayoutEffect(() => {
-
-        topic1?.forEach((elem, i) => { 
-            gsap.set(handleRefs.current[i],  setPos[i] ); // initial setPos will be random
-        })
-
-        initialPath();
-
-      }, [])
-
-    function initialPath() {
-        let pathIndex = 0;
-        topic1?.forEach((elem, i) => { 
-            elem.connectTail && elem.connectTo.forEach((line, j) => {
-                const boxConnectTo = parseInt(line);
-                
-                let x1 = handleRefs.current[i].getBoundingClientRect().x + handleRefs.current[i].offsetWidth;
-                let y1 = handleRefs.current[i].getBoundingClientRect().y -250 ; // title height
-                let x2 = handleRefs.current[boxConnectTo].getBoundingClientRect().x ;
-                let y2 = handleRefs.current[boxConnectTo].getBoundingClientRect().y -250; // title height
-
-                let data = `M${x1} ${y1} L ${x2} ${y2}`;
-                pathRefs.current[pathIndex++].setAttribute("d", data);
-
-            })
-        })
-                    
-    }
-
-    
-    function updatePath( i, boxId) { 
-
-        // deal with just tail 
-        topic1[i].connectTo.forEach((lineObj, j) => {
-            const boxConnectTo = parseInt(lineObj);
-            const boxTailIndex = pathRefs.current.findIndex((path) => path.getAttribute("id") === `${boxId}-${j}` );
-
+function initialPath(topic1, handleRefs, pathRefs) {
+    let pathIndex = 0;
+    topic1?.forEach((elem, i) => { 
+        elem.connectTail && elem.connectTo.forEach((line, j) => {
+            const boxConnectTo = parseInt(line);
+            
             let x1 = handleRefs.current[i].getBoundingClientRect().x + handleRefs.current[i].offsetWidth;
-            let y1 = handleRefs.current[i].getBoundingClientRect().y -250 ; // title height
+            let y1 = handleRefs.current[i].getBoundingClientRect().y -250; // title height
             let x2 = handleRefs.current[boxConnectTo].getBoundingClientRect().x ;
             let y2 = handleRefs.current[boxConnectTo].getBoundingClientRect().y -250; // title height
 
             let data = `M${x1} ${y1} L ${x2} ${y2}`;
-            pathRefs.current[boxTailIndex].setAttribute("d", data);
+            pathRefs.current[pathIndex++].setAttribute("d", data);
         })
+    })                
+}
 
-        // check all connected svg
-        topic1?.forEach((elem, connectedIndex) => { 
-            elem.connectTo?.forEach((lineObj, j) => {
-                if ( lineObj === boxId ) {
-                    const boxTailIndex = pathRefs.current.findIndex((path) => path?.getAttribute("id") === `${connectedIndex}-${j}` );
+function updatePath( i, boxId, topic1, handleRefs, pathRefs, canvasRef) { 
+    // deal with just tail 
+    topic1[i].connectTo.forEach((lineObj, j) => {
+        const boxConnectTo = parseInt(lineObj);
+        const boxTailIndex = pathRefs.current.findIndex((path) => path.getAttribute("id") === `${boxId}-${j}` );
 
-                    let x1 = handleRefs.current[connectedIndex].getBoundingClientRect().x + handleRefs.current[i].offsetWidth;
-                    let y1 = handleRefs.current[connectedIndex].getBoundingClientRect().y -250 ; // title height
-                    let x2 = handleRefs.current[i].getBoundingClientRect().x ;
-                    let y2 = handleRefs.current[i].getBoundingClientRect().y -250; // title height
+        let x1 = handleRefs.current[i].getBoundingClientRect().x + handleRefs.current[i].offsetWidth;
+        let y1 = handleRefs.current[i].getBoundingClientRect().y -250 +canvasRef.current.scrollTop; // title height
+        let x2 = handleRefs.current[boxConnectTo].getBoundingClientRect().x ;
+        let y2 = handleRefs.current[boxConnectTo].getBoundingClientRect().y -250 +canvasRef.current.scrollTop; // title height
+        let data = `M${x1} ${y1} L ${x2} ${y2}`;
+        pathRefs.current[boxTailIndex].setAttribute("d", data);
 
-                    let data = `M${x1} ${y1} L ${x2} ${y2}`;
-                    pathRefs.current[boxTailIndex]?.setAttribute("d", data); 
-                }  
-            })
+    })
+
+    // check all connected svg
+    topic1?.forEach((elem, connectedIndex) => { 
+        elem.connectTo?.forEach((lineObj, j) => {
+            if ( lineObj === boxId ) {
+                const boxTailIndex = pathRefs.current.findIndex((path) => path?.getAttribute("id") === `${connectedIndex}-${j}` );
+
+                let x1 = handleRefs.current[connectedIndex].getBoundingClientRect().x + handleRefs.current[i].offsetWidth;
+                let y1 = handleRefs.current[connectedIndex].getBoundingClientRect().y -250 +canvasRef.current.scrollTop; // title height
+                let x2 = handleRefs.current[i].getBoundingClientRect().x ;
+                let y2 = handleRefs.current[i].getBoundingClientRect().y -250 +canvasRef.current.scrollTop; // title height
+
+                let data = `M${x1} ${y1} L ${x2} ${y2}`;
+                pathRefs.current[boxTailIndex]?.setAttribute("d", data); 
+            }  
         })
+    })
 
-      }
+  }
+
+export default function BoxesView({ canvasRef }) {
+    const { topic1 } = dataJson?.homePage?.rightCol;
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+    const [boxPos, setBoxPos] = useState(genRandomPos(windowDimensions.width, topic1));
+
+    const handleRefs = useRef([]);
+    const pathRefs = useRef([]);
+
+    /**
+     * @TODO force refresh on page resize?
+     */
+    useEffect(()=> {
+        window.addEventListener('resize', () => setWindowDimensions(getWindowDimensions()));
+        return () => window.removeEventListener('resize', () => setWindowDimensions(getWindowDimensions()));
+    }, [])
+
+    useLayoutEffect(() => {
+        topic1?.forEach((elem, i) => { 
+            gsap.set(handleRefs.current[i],  boxPos[i] ); 
+        })
+        initialPath(topic1, handleRefs, pathRefs);
+      }, [])
 
 
     useEffect(() => {
@@ -114,72 +105,32 @@ export default function BoxesView() {
             Draggable.create(elem, {
                 trigger:  elem,
                 cursor: "grab",
-                bounds: "#box-container",
+                // bounds: "#box-container",
+                bounds: {top:0, left:0, width:windowDimensions.width, height:topic1.length*300},
                 edgeResistance: 0.65,
                 inertia: true,
-                onDrag: () => updatePath(i, topic1[i]?.id), // check if tail exist first
+                onDrag: () => updatePath(i, topic1[i]?.id, topic1, handleRefs, pathRefs, canvasRef), // check if tail exist first
                 throwProps: true,
-                onThrowUpdate: () => updatePath(i, topic1[i]?.id)// check if tail exist first
+                onThrowUpdate: () => updatePath(i, topic1[i]?.id, topic1, handleRefs, pathRefs, canvasRef), // check if tail exist first
             })
         })
-
     }, [])
     
     const detailRef = useRef();
-    const [fullScreen, setFullScreen] = useState(false);
-
-    const toggleFullScreen = () => {
-        setFullScreen(!fullScreen)
-    };
 
   return (
-    <StyledBoxesContainer id="box-container" className='box-container'>
-        {/* { renderSVGs(topic1, pathRefs) } */}
+    <StyledBoxesContainer id="box-container" className='box-container' elementAmount={topic1.length} >
         <SVGsContainer elementsData={topic1} pathRefs={pathRefs}/>
-        <BoxesContainer elementsData={topic1} handleRefs={handleRefs} detailRef={detailRef} 
-                        fullScreen={fullScreen} 
-                        // setFullScreen={setFullScreen}
-                        // toggleFullScreen={toggleFullScreen}
-                         />
-
-   
-
+        <BoxesContainer elementsData={topic1} handleRefs={handleRefs} detailRef={detailRef}/>
     </StyledBoxesContainer>
   )
 }
 
 
-const StyledDetail = styled.div`
-    position: absolute;
-    top: 0;
-    left: 0;
-    // transform: translate(-50%, 0);
-    width: 300px;
-    height: 600px;
-    background: red;
-
-    display: ${({ fullScreen }) => fullScreen ? 'block' : 'none'};
-`;
-
-
 const StyledBoxesContainer = styled.div`
     position: relative;
     width: 100%;
-    height: 100%;  
+    // height: 100%;  
+    height: ${({elementAmount}) => elementAmount*250  }px;  
+    overflow: hidden;
 `;
-
-
-
-const StyledBox = styled.div`
-    position: relative;
-    padding: 5px; 
-    height: 100px;
-    width: 100px;
-    max-width: 380px;
-    inline-size: 370px;
-    overflowWrap: break-word;
-    z-index: ${({fullScreen}) => ( fullScreen ? '50' : '0')};
-    
-    background: #fff;
-`;
-

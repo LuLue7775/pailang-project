@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'
+import React, { useState, useRef, useLayoutEffect } from 'react'
 import styled from "styled-components"
 
 import gsap from 'gsap'
@@ -7,15 +7,13 @@ import Draggable from 'gsap/dist/Draggable'
 
 gsap.registerPlugin(Flip, Draggable);
 
-export default function ExtendableContent({ detailRef }) {
+export default function ExtendableContent( props ) {
+    const { boxIndex, id, node, desciption } = props;
 
     const thisBox = useRef();
-
-
-
     // useEffect(() => { 
     //     if (!thisBox.current || !detailRef.current) return
-    //     if ( fullScreen ) {
+    //     if ( contentSizeLg ) {
     //         const state = Flip.getState(thisBox.current );
     //         detailRef.current.style.display = "block"; 
     //         thisBox.current.style.display = "none";
@@ -44,7 +42,7 @@ export default function ExtendableContent({ detailRef }) {
     //         });
     //     }
 
-    // }, [fullScreen])
+    // }, [contentSizeLg])
 
 
 
@@ -52,23 +50,24 @@ export default function ExtendableContent({ detailRef }) {
 // =============================
     const ref = useRef();
     const q = gsap.utils.selector(ref);
-    const [fullScreen, setFullScreen] = useState(false);
-    const [layoutState, setLayoutState] = useState();
+    const [contentSizeLg, setContentSizeLg] = useState(false);
+    const [layoutState, setLayoutState] = useState(null);
 
-    const toggleFullScreen = () => {
-        setFullScreen(!fullScreen);
+    const togglecontentSizeLg = () => {
+        setContentSizeLg(!contentSizeLg);
         setLayoutState(Flip.getState(q(".thumbnail")));
-
     };
     useLayoutEffect(() => {
         if (!layoutState) return;
 
         const flip = Flip.from(layoutState, {
           targets: q(".thumbnail"),
-          duration: 0.6,
+          duration: 0.5,
           scale: true,
+          ease: "power1.inOut",
           // fade: true,
           absolute: true,
+          makeAbsolute: true
         });
     
         return () => {
@@ -76,82 +75,120 @@ export default function ExtendableContent({ detailRef }) {
         };
       }, [layoutState]);
 
-      
+
   return (
 
         // <div
         //     className={` handle `}
-        //     onClick={toggleFullScreen}
+        //     onClick={togglecontentSizeLg}
         // >
         //         <div> GsapBox1 </div>
         //         <StyledClickArea             
         //             ref={thisBox}
-        //             fullScreen={fullScreen} 
+        //             contentSizeLg={contentSizeLg} 
         //             data-flip-id="auto-1"
                     
         //         > click </StyledClickArea>
             
         // </div>
 
-    <StyledCompContainer ref={ref} id="container">
-         {fullScreen ? (
-          <Component2 onClick={toggleFullScreen} />
+    <StyledCompContainer ref={ref} id="box-content" >
+         {contentSizeLg ? (
+          <ContentLG togglecontentSizeLg={togglecontentSizeLg} {...props}/>
         ) : ( 
-          <Component1 onClick={toggleFullScreen} />
+          <ContentSm togglecontentSizeLg={togglecontentSizeLg} {...props}/>
          )} 
     </StyledCompContainer>
 
   )
 }
 
-const Component1 = (props) => {
+const ContentSm = (props) => {
+    const { boxIndex, id, node, desciption, togglecontentSizeLg } = props;
+
     return (
-      <img
-        alt=""
-        className="thumbnail"
-        data-flip-id="img"
-        src="https://placehold.co/200x200"
-        {...props}
-      />
-    );
+        <StyledCompSm
+            className="thumbnail"
+            data-flip-id="img"
+            onClick={togglecontentSizeLg}
+        >
+        {
+            node.content.map( (item, i) => 
+            node.type === 'text' 
+            ? <StyledTextContainer key={i} > 
+              {item} 
+              </StyledTextContainer>
+            : node.type === 'img' 
+                ? <StyledImageContainer key={i} alt="" src="https://placehold.co/100x100"  {...props}  />
+                : 'video'
+            )
+        }
+        <StyledDesc className="desc"> {desciption.map((item, i) => <div key={i} > {item} </div>) }</StyledDesc>
+        </StyledCompSm>
+    )
   };
   
-  const Component2 = (props) => {
+  const ContentLG = (props) => {
+    const { boxIndex, id, node, desciption, togglecontentSizeLg } = props;
+
     return (
-        <StyledComp2  >
-            <img
-                alt=""
-                className="thumbnail"
-                data-flip-id="img"
-                src="https://placehold.co/600x600"
-                {...props}
-            />
-        </StyledComp2>
+        <StyledCompLg
+            className="thumbnail box-container"
+            data-flip-id="img"
+            onClick={togglecontentSizeLg}
+        >
+        {
+            node.content.map( (item, i) => 
+            node.type === 'text' 
+            ? <StyledTextContainer key={i} > 
+              {item} 
+              </StyledTextContainer>
+            : node.type === 'img' 
+                ? <StyledImageContainer key={i} alt="" src="https://placehold.co/600x600"  {...props}  />
+                : 'video'
+            )
+        }
+        </StyledCompLg>
     );
   };
 
+const StyledDesc = styled.div`
+    position: absolute; 
+    top:100px;
+`
 const StyledCompContainer = styled.div`
-    position: absolute;
-    // top: 50%;
-    // left: 50%;  
-    // transform: translate(-50%, 0);
-
+    position: absolute; 
 `
-const StyledComp2 = styled.div`
+const StyledCompSm = styled.div`
+    background: blue;
+    font-size: 1rem;
+    height: 80px;
+    width: 300px;
+    overflow: hidden;
 `
+const StyledCompLg = styled.div`
+    background:red;
+    font-size: 1.5rem;
+`
+const StyledTextContainer = styled.div`
+    &:hover { cursor: pointer; };
+`
+const StyledImageContainer = styled.img`
+    &:hover { cursor: pointer; };
+`;
 
 const StyledClickArea = styled.div`
-    // width: ${({fullScreen}) => fullScreen ? '200px': '50px'};
+    // width: ${({contentSizeLg}) => contentSizeLg ? '200px': '50px'};
     // transition: width 2s, height 4s;
 
     width: 50px;
     height: 50px;
-    background: ${({ fullScreen }) => fullScreen ? 'red' : 'blue'};;
+    background: ${({ contentSizeLg }) => contentSizeLg ? 'red' : 'blue'};
 
     &:hover { cursor: pointer; };
 
-    // visibility: ${({ fullScreen }) => fullScreen ? 'hidden' : ''};
-    // display: ${({ fullScreen }) => fullScreen ? 'none' : ''};
+    // visibility: ${({ contentSizeLg }) => contentSizeLg ? 'hidden' : ''};
+    // display: ${({ contentSizeLg }) => contentSizeLg ? 'none' : ''};
     
 
 `
